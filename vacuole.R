@@ -1,5 +1,5 @@
 # vacuole.R -
-#   analyze GFP/RFP ratios
+#   analyze RFP/GFP ratios
 
 library(ggplot2)
 library(dplyr)
