@@ -1,8 +1,8 @@
 # vacuole.R -
 #   analyze RFP/GFP ratios
 
-library(ggplot2)
-library(dplyr)
+require(ggplot2)
+require(dplyr)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
@@ -25,6 +25,7 @@ starttime <- Sys.time()
 #   DMSO      | 2017-07-24 15:13
 #   ...       | ...
 #
+# the values of StartTime are used to calculate the exact times since inoculation
 
 infofile <- file.path(dir, 'info.txt')
 stopifnot(file.exists(infofile))
