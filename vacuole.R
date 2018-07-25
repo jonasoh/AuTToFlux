@@ -53,7 +53,7 @@ for(f in files) {
 
   # if channels are not specified in the file, add them
   if (! 'Ch' %in% names(tbl)) {
-    tbl$Ch == 1:3
+    tbl$Ch <- 1:3
   }
   
   # remove areas < 1 (these are specks which give weird results)
