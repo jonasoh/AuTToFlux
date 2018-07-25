@@ -99,6 +99,7 @@ for (tp in unique(expdata$Timepoint)) {
 }
 
 expdata$Norm_Ratio <- normratios
+expdata$Log_Ratio <- log10(normratios)
 
 # summarize the data for plotting and analysis
 expdata %>% group_by(Timepoint) %>% 
