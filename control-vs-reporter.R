@@ -16,7 +16,7 @@ if (.Platform$OS.type == 'unix') {
 starttime <- Sys.time()
 
 # override input - use this for development only
-dir <- '~/Documents/ImageJ/TTE14_1uMC7/'
+#dir <- '~/Documents/ImageJ/TTE14_1uMC7/'
 
 # make sure to start with a clean slate
 expdata <- NULL
