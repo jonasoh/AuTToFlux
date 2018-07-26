@@ -88,7 +88,6 @@ for(d in realdirs) {
       imgdata <- data.frame(Ratio = ratios, Line = line, Treatment = treatment, Seedling = seedling_no, 
                             Image = image_no, Area = areas, Experiment = experiment)
       expdata <- rbind(expdata, imgdata)
-      alldata <- rbind(alldata, expdata)
     }
   }
   
@@ -100,6 +99,7 @@ for(d in realdirs) {
   }
   
   expdata$Norm_Ratio <- normratios
+  alldata <- rbind(alldata, expdata)
   
   # summarize the data for plotting and analysis
   expdata %>% group_by(Line) %>% 
