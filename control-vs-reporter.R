@@ -117,7 +117,11 @@ for(d in realdirs) {
   
   cat("\nPerforming permutation test for experiment", experiment, "... ")
   
-  perm <- summary(aovp(Mean_Raw_Ratio~Treatment, data=expsum1[expsum1$Line=='Reporter',], perm='Exact', maxExact = 100))
+  if ('Reporter' %in% unique(expsum1$Line)) {
+    perm <- summary(aovp(Mean_Raw_Ratio~Treatment, data=expsum1[expsum1$Line=='Reporter',], perm='Exact', maxExact = 100))
+  } else {
+    perm <- summary(aovp(Mean_Raw_Ratio~Treatment, data=expsum1[expsum1$Line=='Reporter-N',], perm='Exact', maxExact = 100))
+  }
   
   pval <- unlist(perm)[7]
   cat("p-value is", pval, "\n")
@@ -125,7 +129,8 @@ for(d in realdirs) {
 }
 
 exppvals <- data.frame(Experiment = experiments, pval = pvals)
-write.table(exppvals, file.path(dir, 'pvals.txt', row.names=FALSE))
+write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE)
+write.table(alldata, file.path(dir, 'summary.txt'), row.names=FALSE)
 
 scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", n, "files.\n")
