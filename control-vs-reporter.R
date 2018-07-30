@@ -22,7 +22,7 @@ n <- 0
 
 # make sure to start with a clean slate
 alldata <- NULL
-pvals <- NULL
+perms <- ctrlperms <- repts <- ctrlts <- NULL
 experiments <- NULL
 
 # get a list of subdirectories - these are the separate experiments
@@ -93,9 +93,10 @@ for(d in realdirs) {
   
   normratios <- NULL
   
+  # normalize data against DMSO controls, per line
   for (l in unique(expdata$Line)) {
-    dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'DMSO' & expdata$Line == l])
-    normratios <- c(normratios, expdata$Ratio[expdata$Line == l] / dmso_mean)
+    dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'DMSO' & expdata$Line == l & expdata$Experiment == experiment])
+    normratios <- c(normratios, expdata$Ratio[expdata$Line == l & expdata$Experiment == experiment] / dmso_mean)
   }
   
   expdata$Norm_Ratio <- normratios
@@ -115,26 +116,58 @@ for(d in realdirs) {
   write.table(expdata, file.path(d, 'summary-full.txt'), row.names=FALSE) 
   write.table(expsum1, file.path(d, 'summary-perseedling.txt'), row.names=FALSE)
   
-  cat("\nPerforming permutation test for experiment", experiment, "... ")
+  cat("\nCalculating statistics for experiment", experiment, "... ")
   
+  # calculate p-values using both t-test (unpaired, two-tailed, no assumption of equal variances, log-transformation of ratios)
+  # and permutation test. 
+  # we need to check for the special cases where reporters and controls are named with '-N' suffix
   if ('Reporter' %in% unique(expsum1$Line)) {
-    perm <- summary(aovp(Mean_Raw_Ratio~Treatment, data=expsum1[expsum1$Line=='Reporter',], perm='Exact', maxExact = 100))
+    perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+                         data=expsum1[expsum1$Line=='Reporter',], perm='Prob'))
+    ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+                             data=expsum1[expsum1$Line=='Control',], perm='Prob'))
+    rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment=='DMSO'], 
+                   expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment!='DMSO'])
+    ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment=='DMSO'], 
+                    expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment!='DMSO'])
   } else {
-    perm <- summary(aovp(Mean_Raw_Ratio~Treatment, data=expsum1[expsum1$Line=='Reporter-N',], perm='Exact', maxExact = 100))
+    perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+                         data=expsum1[expsum1$Line=='Reporter-N',], perm='Prob'))
+    ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+                             data=expsum1[expsum1$Line=='Control-N',], perm='Prob'))
+    rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter-N' & expsum1$Treatment=='DMSO'], 
+                   expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter-N' & expsum1$Treatment!='DMSO'])
+    ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control-N' & expsum1$Treatment=='DMSO'], 
+                    expsum1$Raw_Log_Ratio[expsum1$Line=='Control-N' & expsum1$Treatment!='DMSO'])
   }
   
-  pval <- unlist(perm)[7]
-  cat("p-value is", pval, "\n")
-  pvals <- c(pvals, pval)
+  r.p.pval <- unlist(perm)[9]
+  c.p.pval <- unlist(ctrlperm)[9]
+  rept.pval <- rept$p.value
+  ctrlt.pval <- ctrlt$p.value
+
+  perms <- c(perms, r.p.pval)
+  ctrlperms <- c(ctrlperms, c.p.pval)
+  repts <- c(repts, rept.pval)
+  ctrlts <- c(ctrlts, ctrlt.pval)
 }
 
-exppvals <- data.frame(Experiment = experiments, pval = pvals)
+# collect the p-values computed using all methods and save it to a file in main dir
+exppvals <- data.frame(Experiment = experiments, Reporter.perm.pval = perms, Control.perm.pval = ctrlperms, 
+                       Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts)
 write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE)
+
+alldata %>% 
+  group_by(Experiment) %>% 
+  group_by(Line,add=T) %>% 
+  group_by(Treatment, add=T) %>% 
+  group_by(Seedling, add=T) %>% 
+  summarize(Norm_Ratio = mean(Norm_Ratio)) -> allsum
+
+# also save complete data set as well as per-seedling summaries of all experiments
+write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row=T)
 write.table(alldata, file.path(dir, 'summary.txt'), row.names=FALSE)
 
 scripttime <- Sys.time() - starttime
-cat("Took", scripttime, "seconds to process", n, "files.\n")
-
-# here goes the plotting functions
-#ggplot(expdata, aes(x=Treatment, y=Norm_Ratio)) + geom_boxplot() + facet_grid(. ~ Line)
-#ggplot(expsum1, aes(x=Treatment, y=Mean_Ratio)) + geom_boxplot() + facet_grid(. ~ Line)
+units(scripttime) <- 'mins'
+cat("Took", scripttime, "minutes to process", n, "files.\n")
