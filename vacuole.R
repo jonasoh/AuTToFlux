@@ -105,20 +105,13 @@ expdata %>% group_by(Timepoint) %>%
   summarize(Mean_Ratio = mean(Norm_Ratio), 
             SD = sd(Norm_Ratio), 
             Elapsed = mean(Elapsed),
-            n = n()) -> expsum1
-
-expdata %>% group_by(Timepoint) %>% 
-  group_by(Treatment, add = TRUE) %>% 
-  summarize(Mean_Ratio = mean(Norm_Ratio), 
-            SD = sd(Norm_Ratio), 
-            Elapsed = mean(Elapsed),
-            n = n()) -> expsum2
+            n = n()) -> expsum
 
 # we need to convert POSIXct format datetimes into character in order to save them
 expdata2 <- expdata
 expdata2$Actual_Time <- as.character(expdata2$Actual_Time)
 write.table(expdata2, file.path(dir, 'summary-full.txt'), row.names = FALSE) 
-write.table(expsum1, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE)
+write.table(expsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE)
 
 scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")
