@@ -1,10 +1,14 @@
 # control-vs-reporter.R -
 #   compare responses in control vs reporter lines
+#   
+#   this script requires a main directory, with subdirectories containing control and reporter 
+#   data for each experiment
 
 require(ggplot2)
 require(dplyr)
 require(readr)
-library(lmPerm)
+require(lmPerm)
+require(strict)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
@@ -29,6 +33,9 @@ for(d in dirs) {
     realdirs <- c(realdirs, d)
   }
 }
+
+# end script if there are no subdirectories
+stopifnot(length(realdirs) > 0)
 
 # process each dir separately
 for(d in realdirs) {
@@ -83,7 +90,7 @@ for(d in realdirs) {
     
     if (length(ratios > 0)) {
       imgdata <- data.frame(Ratio = ratios, Line = line, Treatment = treatment, Seedling = seedling_no, 
-                            Image = image_no, Area = areas, Experiment = experiment)
+                            Image = image_no, Area = areas, Experiment = experiment, stringsAsFactors = FALSE)
       expdata <- rbind(expdata, imgdata)
     }
   }
@@ -100,7 +107,8 @@ for(d in realdirs) {
   alldata <- rbind(alldata, expdata)
   
   # summarize the data for plotting and analysis
-  expdata %>% group_by(Line) %>% 
+  expdata %>% 
+    group_by(Line) %>% 
     group_by(Treatment, add = TRUE) %>% 
     group_by(Seedling, add = TRUE) %>% 
     summarize(Mean_Ratio = mean(Norm_Ratio), 
@@ -151,7 +159,7 @@ for(d in realdirs) {
 
 # collect the p-values computed using all methods and save them to a file in main dir
 exppvals <- data.frame(Experiment = experiments, Reporter.perm.pval = perms, Control.perm.pval = ctrlperms, 
-                       Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts)
+                       Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts, stringsAsFactors = FALSE)
 write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE)
 
 alldata %>% 
