@@ -14,9 +14,6 @@ if (.Platform$OS.type == 'unix') {
 # might as well measure how long it takes
 starttime <- Sys.time()
 
-# override input - use this for development only
-#dir <- '~/Documents/ImageJ/TTE27'
-
 # check that there's an info.txt file in the directory
 # info.txt is a tab-delimited file with two columns:
 #
@@ -44,12 +41,12 @@ for(f in files) {
 
   # due to the way ImageJ saves the .csv files, datetimes are stored in the first cell of the last row
   datetime <- as.character(tbl[rows, 1])
-  datetime <- unlist(strsplit(datetime, '.', fixed=TRUE))[1]
-  datetime <- sub('T', ' ', datetime, fixed=TRUE)
+  datetime <- unlist(strsplit(datetime, '.', fixed = TRUE))[1]
+  datetime <- sub('T', ' ', datetime, fixed = TRUE)
   datetime <- strptime(datetime, format='%Y-%m-%d %H:%M:%S')
   
   # remove last two rows as they contain junk
-  tbl <- tbl[-c(rows, rows-1),]
+  tbl <- tbl[-c(rows, rows - 1),]
 
   # if channels are not specified in the file, add them
   if (! 'Ch' %in% names(tbl)) {
@@ -64,9 +61,9 @@ for(f in files) {
   
   # get the base file name - we derive data from it
   bname <- basename(f)
-  bname <- sub('.czi.csv', '', bname, fixed=TRUE)
+  bname <- sub('.czi.csv', '', bname, fixed = TRUE)
   
-  params <- unlist(strsplit(bname, '_', fixed=TRUE))
+  params <- unlist(strsplit(bname, '_', fixed = TRUE))
   
   timepoint <- params[1]
   line <- params[2]
@@ -103,15 +100,15 @@ expdata$Log_Ratio <- log10(normratios)
 
 # summarize the data for plotting and analysis
 expdata %>% group_by(Timepoint) %>% 
-  group_by(Treatment, add=T) %>% 
-  group_by(Seedling, add=T) %>% 
+  group_by(Treatment, add = TRUE) %>% 
+  group_by(Seedling, add = TRUE) %>% 
   summarize(Mean_Ratio = mean(Norm_Ratio), 
             SD = sd(Norm_Ratio), 
             Elapsed = mean(Elapsed),
             n = n()) -> expsum1
 
 expdata %>% group_by(Timepoint) %>% 
-  group_by(Treatment, add=T) %>% 
+  group_by(Treatment, add = TRUE) %>% 
   summarize(Mean_Ratio = mean(Norm_Ratio), 
             SD = sd(Norm_Ratio), 
             Elapsed = mean(Elapsed),
@@ -120,8 +117,8 @@ expdata %>% group_by(Timepoint) %>%
 # we need to convert POSIXct format datetimes into character in order to save them
 expdata2 <- expdata
 expdata2$Actual_Time <- as.character(expdata2$Actual_Time)
-write.table(expdata2, file.path(dir, 'summary-full.txt'), row.names=FALSE) 
-write.table(expsum1, file.path(dir, 'summary-perseedling.txt'), row.names=FALSE)
+write.table(expdata2, file.path(dir, 'summary-full.txt'), row.names = FALSE) 
+write.table(expsum1, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE)
 
 scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")
@@ -136,4 +133,3 @@ ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) +
   geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) + 
   theme(panel.background = element_blank()) + 
   scale_color_brewer()
-
