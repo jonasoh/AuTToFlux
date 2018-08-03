@@ -4,11 +4,11 @@
 #   this script requires a main directory, with subdirectories containing control and reporter 
 #   data for each experiment
 
-require(ggplot2)
-require(dplyr)
-require(readr)
-require(lmPerm)
-require(strict)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(lmPerm)
+library(strict)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {

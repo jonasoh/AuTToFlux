@@ -1,8 +1,8 @@
 # vacuole.R -
 #   analyze RFP/GFP ratios
 
-require(ggplot2)
-require(dplyr)
+library(ggplot2)
+library(dplyr)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
