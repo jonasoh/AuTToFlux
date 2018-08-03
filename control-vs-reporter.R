@@ -17,21 +17,17 @@ if (.Platform$OS.type == 'unix') {
 starttime <- Sys.time()
 n <- 0
 
-# override input - use this for development only
-#dir <- '~/Documents/ImageJ/TTE14_1uMC7/'
-
 # make sure to start with a clean slate
-alldata <- NULL
-perms <- ctrlperms <- repts <- ctrlts <- NULL
-experiments <- NULL
+alldata <- experiments <- perms <- ctrlperms <- repts <- ctrlts <- realdirs <- NULL
 
 # get a list of subdirectories - these are the separate experiments
 dirs <- list.files(path = dir, full.names = TRUE, recursive = FALSE, no.. = TRUE)
 
 # make sure we only include directories
-realdirs <- NULL
 for(d in dirs) {
-  if(file.info(d)$isdir) realdirs <- c(realdirs, d)
+  if(file.info(d)$isdir) {
+    realdirs <- c(realdirs, d)
+  }
 }
 
 # process each dir separately
@@ -46,7 +42,7 @@ for(d in realdirs) {
   for(f in files) {
     n <- n + 1
     cat('.')
-    suppressMessages(suppressWarnings(tbl <- readr::read_csv(f, guess_max=2)))
+    suppressMessages(suppressWarnings(tbl <- readr::read_csv(f, guess_max = 2)))
     rows <- dim(tbl)[1]
     
     # use complete.cases to strip out trailing junk
@@ -61,6 +57,7 @@ for(d in realdirs) {
     }
     
     # remove areas < 1 (these are specks which give weird results)
+    # XXX: this may need tweaking, but for now all erroneous areas are < 1
     out <- which(tbl$Area1 < 1)
     if (length(out) > 0) {
       tbl <- tbl[-out,]
@@ -68,9 +65,9 @@ for(d in realdirs) {
     
     # get the base file name - we derive data from it
     bname <- basename(f)
-    bname <- sub('.czi.csv', '', bname, fixed=TRUE)
+    bname <- sub('.czi.csv', '', bname, fixed = TRUE)
     
-    params <- unlist(strsplit(bname, '_', fixed=TRUE))
+    params <- unlist(strsplit(bname, '_', fixed = TRUE))
     
     line <- params[1]
     treatment <- params[2]
@@ -104,8 +101,8 @@ for(d in realdirs) {
   
   # summarize the data for plotting and analysis
   expdata %>% group_by(Line) %>% 
-    group_by(Treatment, add=T) %>% 
-    group_by(Seedling, add=T) %>% 
+    group_by(Treatment, add = TRUE) %>% 
+    group_by(Seedling, add = TRUE) %>% 
     summarize(Mean_Ratio = mean(Norm_Ratio), 
               Mean_Raw_Ratio = mean(Ratio),
               Log_Ratio = log10(Mean_Ratio), 
@@ -113,8 +110,8 @@ for(d in realdirs) {
               SD = sd(Norm_Ratio), 
               n = n()) -> expsum1
   
-  write.table(expdata, file.path(d, 'summary-full.txt'), row.names=FALSE) 
-  write.table(expsum1, file.path(d, 'summary-perseedling.txt'), row.names=FALSE)
+  write.table(expdata, file.path(d, 'summary-full.txt'), row.names = FALSE) 
+  write.table(expsum1, file.path(d, 'summary-perseedling.txt'), row.names = FALSE)
   
   cat("\nCalculating statistics for experiment", experiment, "... ")
   
@@ -152,21 +149,21 @@ for(d in realdirs) {
   ctrlts <- c(ctrlts, ctrlt.pval)
 }
 
-# collect the p-values computed using all methods and save it to a file in main dir
+# collect the p-values computed using all methods and save them to a file in main dir
 exppvals <- data.frame(Experiment = experiments, Reporter.perm.pval = perms, Control.perm.pval = ctrlperms, 
                        Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts)
 write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE)
 
 alldata %>% 
   group_by(Experiment) %>% 
-  group_by(Line,add=T) %>% 
-  group_by(Treatment, add=T) %>% 
-  group_by(Seedling, add=T) %>% 
+  group_by(Line, add = TRUE) %>% 
+  group_by(Treatment, add = TRUE) %>% 
+  group_by(Seedling, add = TRUE) %>% 
   summarize(Norm_Ratio = mean(Norm_Ratio)) -> allsum
 
 # also save complete data set as well as per-seedling summaries of all experiments
-write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row=T)
-write.table(alldata, file.path(dir, 'summary.txt'), row.names=FALSE)
+write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE)
+write.table(alldata, file.path(dir, 'summary.txt'), row.names = FALSE)
 
 scripttime <- Sys.time() - starttime
 units(scripttime) <- 'mins'
