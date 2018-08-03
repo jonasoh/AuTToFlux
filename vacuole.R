@@ -126,23 +126,14 @@ write.table(expsum1, file.path(dir, 'summary-perseedling.txt'), row.names=FALSE)
 scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")
 
+# ugly sorting hack
+expdata$Treatment <- relevel(expdata$Treatment, '5uM C12')
+expdata$Treatment <- relevel(expdata$Treatment, 'DMSO')
+
 # here goes the plotting functions
 ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) + 
-  geom_point(alpha=.2, size=.5) + 
-  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='gam', se=FALSE)
+  geom_point(alpha=.2, size=1.5) + 
+  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) + 
+  theme(panel.background = element_blank()) + 
+  scale_color_brewer()
 
-ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) + 
-  geom_point(alpha=.2, size=.5) + 
-  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE)
-
-ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) + 
-  geom_point(alpha=.2, size=.5) + 
-  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='loess', se=FALSE)
-
-ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment, shape=as.factor(Seedling))) + 
-  geom_point(alpha=.2, size=.5) + 
-  geom_line(data=expsum2, aes(x=Elapsed, y=Mean_Ratio, color=Treatment))
-
-ggplot(expsum1, aes(x=Elapsed, y=Mean_Ratio, ymax=Mean_Ratio+SD, ymin=Mean_Ratio-SD, color=Treatment, shape=factor(Seedling))) +
-  geom_point() + 
-  geom_errorbar(width=.1)
