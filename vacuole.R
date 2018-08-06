@@ -46,9 +46,6 @@ for(f in files) {
   datetime <- sub('T', ' ', datetime, fixed = TRUE)
   datetime <- strptime(datetime, format='%Y-%m-%d %H:%M:%S')
   
-  # remove last two rows as they contain junk
-  tbl <- tbl[-c(rows, rows - 1), , drop = TRUE]
-
   # if channels are not specified in the file, add them
   if (! 'Ch' %in% names(tbl)) {
     tbl$Ch <- 1:3
@@ -92,7 +89,7 @@ for(f in files) {
     
     imgdata <- data.frame(Ratio = ratios, Timepoint = timepoint, Line = line, Treatment = treatment, Seedling = seedling_no, 
                           Image = image_no, Area = areas, Actual_Time = datetime, Elapsed = elapsed, stringsAsFactors = FALSE)
-    expdata <- rbind(expdata, imgdata)
+    expdata <- bind_rows(expdata, imgdata)
   }
 }
 
