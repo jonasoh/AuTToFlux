@@ -36,11 +36,12 @@ expdata <- NULL
 files <- list.files(path = dir, pattern = 'csv$', full.names = TRUE, recursive = TRUE, ignore.case = TRUE, no.. = TRUE)
 
 for(f in files) {
+  # read the file and its accompanying creation time
   tbl <- read.csv(f, stringsAsFactors = FALSE)
-  rows <- dim(tbl)[1]
+  crdate <- read.table(sub('csv$', 'time', f), stringsAsFactors = FALSE)
 
-  # due to the way ImageJ saves the .csv files, datetimes are stored in the first cell of the last row
-  datetime <- as.character(tbl[rows, 1, drop = TRUE])
+  # process time description
+  datetime <- as.character(crdate)
   datetime <- unlist(strsplit(datetime, '.', fixed = TRUE))[1]
   datetime <- sub('T', ' ', datetime, fixed = TRUE)
   datetime <- strptime(datetime, format='%Y-%m-%d %H:%M:%S')

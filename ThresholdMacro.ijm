@@ -73,8 +73,10 @@ for(w = 0; w < czilist.length; w++) {
 		run("Input/Output...", "jpeg=0 gif=-1 file=.csv use_file copy_column copy_row save_column save_row");
 		saveAs("Results", name + ".csv");
 
-		// this is an ugly hack but it works ok for importing into R
-		File.append(",,,,,," + crdate, name + ".csv");
+		// write the creation date to a separate file
+		f = File.open(name + ".time");
+		print(f, crdate);
+		File.close(f);
 	}
 
 	if (nrois>0) {
