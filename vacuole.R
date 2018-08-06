@@ -30,7 +30,7 @@ treatments <- read.delim(infofile)
 treatments$StartTime <- strptime(treatments$StartTime, format='%Y-%m-%d %H:%M')
 
 # make sure to start with a clean slate
-expdata <- NULL
+expdata <- normratios <- NULL
 
 # get all .csv files in the directory
 files <- list.files(path = dir, pattern = 'csv$', full.names = TRUE, recursive = TRUE, ignore.case = TRUE, no.. = TRUE)
@@ -85,15 +85,13 @@ for(f in files) {
   if (length(ratios > 0)) {
     # beware: areas are numbered sequentially from 1 to the number of areas, and thus do not necessarily match 
     #   those in the original files (i.e. if specks were removed)
-    areas = 1:length(ratios)
+    areas = seq_along(length(ratios))
     
     imgdata <- data.frame(Ratio = ratios, Timepoint = timepoint, Line = line, Treatment = treatment, Seedling = seedling_no, 
                           Image = image_no, Area = areas, Actual_Time = datetime, Elapsed = elapsed, stringsAsFactors = FALSE)
     expdata <- bind_rows(expdata, imgdata)
   }
 }
-
-normratios <- NULL
 
 for (tp in unique(expdata$Timepoint)) {
   dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'DMSO' & expdata$Timepoint == tp])
