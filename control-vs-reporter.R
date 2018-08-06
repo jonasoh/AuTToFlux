@@ -72,6 +72,11 @@ for(d in realdirs) {
     
     # get the base file name - we derive data from it
     bname <- basename(f)
+    
+    # check that the name conforms to naming standard
+    # if it doesn't conform, we stop the script to avoid calculation errors
+    stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
+    
     bname <- sub('.czi.csv', '', bname, fixed = TRUE)
     
     params <- unlist(strsplit(bname, '_', fixed = TRUE))
