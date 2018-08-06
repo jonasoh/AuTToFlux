@@ -49,12 +49,9 @@ for(d in realdirs) {
   for(f in files) {
     n <- n + 1
     cat('.')
-    suppressMessages(suppressWarnings(tbl <- readr::read_csv(f, guess_max = 2)))
+    tbl <- read.csv(f, stringsAsFactors = FALSE)
     rows <- dim(tbl)[1]
-    
-    # use complete.cases to strip out trailing junk
-    tbl <- tbl[complete.cases(tbl),]
-    
+
     # sometimes the Area column becomes factor, we don't want this
     tbl$Area1 <- as.numeric(tbl$Area1)
     
