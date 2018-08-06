@@ -36,17 +36,17 @@ expdata <- NULL
 files <- list.files(path = dir, pattern = 'csv$', full.names = TRUE, recursive = TRUE, ignore.case = TRUE, no.. = TRUE)
 
 for(f in files) {
-  tbl <- read.csv(f)
+  tbl <- read.csv(f, stringsAsFactors = FALSE)
   rows <- dim(tbl)[1]
 
   # due to the way ImageJ saves the .csv files, datetimes are stored in the first cell of the last row
-  datetime <- as.character(tbl[rows, 1])
+  datetime <- as.character(tbl[rows, 1, drop = TRUE])
   datetime <- unlist(strsplit(datetime, '.', fixed = TRUE))[1]
   datetime <- sub('T', ' ', datetime, fixed = TRUE)
   datetime <- strptime(datetime, format='%Y-%m-%d %H:%M:%S')
   
   # remove last two rows as they contain junk
-  tbl <- tbl[-c(rows, rows - 1),]
+  tbl <- tbl[-c(rows, rows - 1), , drop = TRUE]
 
   # if channels are not specified in the file, add them
   if (! 'Ch' %in% names(tbl)) {
@@ -56,11 +56,16 @@ for(f in files) {
   # remove areas < 1 (these are specks which give weird results)
   out <- which(tbl$Area < 1)
   if (length(out) > 0) {
-    tbl <- tbl[-out,]
+    tbl <- tbl[-out, ,drop = TRUE]
   }
   
   # get the base file name - we derive data from it
   bname <- basename(f)
+  
+  # check that the name conforms to naming standard
+  # if it doesn't conform, we stop the script to avoid calculation errors
+  stopifnot(grepl('^[[:print:]]+_[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
+  
   bname <- sub('.czi.csv', '', bname, fixed = TRUE)
   
   params <- unlist(strsplit(bname, '_', fixed = TRUE))
@@ -77,13 +82,15 @@ for(f in files) {
   # find out the exact elapsed time, in minutes
   elapsed <- as.numeric(datetime - treatments$StartTime[treatments$Treatment == treatment]) * 60
 
-  # beware: areas are numbered sequentially from 1 to the number of areas, and thus do not necessarily match 
-  #   those in the original files (i.e. if specks were removed)
-  areas = 1:length(ratios)
-
+  areas <- NULL
+  
   if (length(ratios > 0)) {
+    # beware: areas are numbered sequentially from 1 to the number of areas, and thus do not necessarily match 
+    #   those in the original files (i.e. if specks were removed)
+    areas = 1:length(ratios)
+    
     imgdata <- data.frame(Ratio = ratios, Timepoint = timepoint, Line = line, Treatment = treatment, Seedling = seedling_no, 
-                          Image = image_no, Area = areas, Actual_Time = datetime, Elapsed = elapsed)
+                          Image = image_no, Area = areas, Actual_Time = datetime, Elapsed = elapsed, stringsAsFactors = FALSE)
     expdata <- rbind(expdata, imgdata)
   }
 }
@@ -97,6 +104,10 @@ for (tp in unique(expdata$Timepoint)) {
 
 expdata$Norm_Ratio <- normratios
 expdata$Log_Ratio <- log10(normratios)
+
+expdata$Timepoint <- as.factor(expdata$Timepoint)
+expdata$Line <- as.factor(expdata$Line)
+expdata$Treatment <- as.factor(expdata$Treatment)
 
 # summarize the data for plotting and analysis
 expdata %>% group_by(Timepoint) %>% 
