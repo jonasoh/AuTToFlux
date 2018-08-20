@@ -162,7 +162,7 @@ for(d in realdirs) {
 # collect the p-values computed using all methods and save them to a file in main dir
 exppvals <- data.frame(Experiment = experiments, Reporter.perm.pval = perms, Control.perm.pval = ctrlperms, 
                        Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts, stringsAsFactors = FALSE)
-write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE)
+write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE, sep='\t')
 
 alldata %>% 
   group_by(Experiment) %>% 
@@ -172,8 +172,8 @@ alldata %>%
   summarize(Norm_Ratio = mean(Norm_Ratio)) -> allsum
 
 # also save complete data set as well as per-seedling summaries of all experiments
-write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE)
-write.table(alldata, file.path(dir, 'summary.txt'), row.names = FALSE)
+write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE, sep='\t')
+write.table(alldata, file.path(dir, 'summary.txt'), row.names = FALSE, sep='\t')
 
 scripttime <- Sys.time() - starttime
 units(scripttime) <- 'mins'
