@@ -2,10 +2,28 @@
 
 // ask the user for the directory with images to process
 dir = getDirectory("Choose directory");
-list = getFileList(dir);
 
 // note start time, for benchmarking
 start = getTime();
+
+// get file listing
+list = getFileList(dir);
+newlist = list;
+
+// expand directories -- we only recurse one level deep
+// (i.e. main directory with subdirs for each experiment
+for(i = 0; i < list.length; i++) {
+	if (endsWith(list[i], File.separator)) {
+		print("checking " + list[i]);
+		files = getFileList(dir + list[i]);
+		for (n = 0; n < files.length; n++) {
+			files[n] = list[i] + File.separator + files[n];
+		}
+		newlist = Array.concat(newlist, files);
+		Array.print(newlist);
+	}
+}
+list = newlist;
 
 // we only process files ending in .czi
 czilist = newArray(0);
@@ -18,7 +36,7 @@ for(w = 0; w < list.length; w++) {
 // loop over all images
 for(w = 0; w < czilist.length; w++) {
 	name = dir + File.separator + czilist[w];
-	basename = czilist[w];
+	basename = File.getName(name);
 
 	run("Bio-Formats Windowless Importer", "open=" + name);
 
@@ -59,7 +77,6 @@ for(w = 0; w < czilist.length; w++) {
 
 	// process the rois, if there are any
 	if (nrois > 0) {
-		selectWindow("Mask of " + basename + ".gfp.tif");
 		saveAs("Tiff", name + ".mask.tif");
 
 		run("Bio-Formats Windowless Importer", "open=" + name);
@@ -75,7 +92,6 @@ for(w = 0; w < czilist.length; w++) {
 
 		// write the creation date to a separate file
 		f = File.open(name + ".time");
-		print(f, crdate);
 		File.close(f);
 	}
 
@@ -85,7 +101,7 @@ for(w = 0; w < czilist.length; w++) {
 
 	// clean up before the next iteration
 	run("Clear Results");
-	while (nImages>0) { 
+	while (nImages>0) {
 		selectImage(nImages);
 		close();
 	}
