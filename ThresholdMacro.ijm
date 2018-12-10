@@ -28,7 +28,7 @@ list = newlist;
 // we only process files ending in .tif
 czilist = newArray(0);
 for(w = 0; w < list.length; w++) {
-	if(endsWith(list[w], 'czi')) {
+	if(endsWith(list[w], 'tif')) {
 		czilist = Array.concat(czilist, list[w]);
 	}
 }
