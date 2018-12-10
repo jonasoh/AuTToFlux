@@ -120,6 +120,14 @@ for(d in realdirs) {
               SD = sd(Norm_Ratio), 
               n = n()) -> expsum1
   
+  expdata %>%
+    group_by(Line) %>% 
+    group_by(Treatment, add = TRUE) %>% 
+    summarize(Mean_Ratio = mean(Norm_Ratio), 
+              Log_Ratio = log10(Mean_Ratio), 
+              SD = sd(Norm_Ratio), 
+              n = n()) -> expsum2
+  
   write.table(expdata, file.path(d, 'summary-full.txt'), row.names = FALSE) 
   write.table(expsum1, file.path(d, 'summary-perseedling.txt'), row.names = FALSE)
   
