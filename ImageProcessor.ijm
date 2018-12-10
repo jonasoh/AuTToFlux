@@ -38,14 +38,13 @@ for (n = 1; n < images.length; n++) {
 		close();
 	} else {
 		// file contains several images; save each separately
-		Ext.getImageCreationDate(crdate);
 		for (i = 1; i < count + 1; i++) {
 			Ext.setSeries(i - 1);
 			Ext.getSeriesName(sname);
+			Ext.getImageCreationDate(crdate);
 			run("Bio-Formats Windowless Importer", "open=[" + images[n] + "] series_" + count);
 			saveAs("tiff", dir + File.separator + sname + ".tif");
-			Ext.getPlaneTimingDeltaT(deltaT, i - 1);
-			File.saveString(crdate + "!" + deltaT, dir + File.separator + sname + ".tif.time");
+			File.saveString(crdate, dir + File.separator + sname + ".tif.time");
 			num++;
 			close();
 		}
