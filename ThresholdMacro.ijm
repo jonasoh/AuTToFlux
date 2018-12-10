@@ -25,7 +25,7 @@ for(i = 0; i < list.length; i++) {
 }
 list = newlist;
 
-// we only process files ending in .czi
+// we only process files ending in .tif
 czilist = newArray(0);
 for(w = 0; w < list.length; w++) {
 	if(endsWith(list[w], 'czi')) {
@@ -38,18 +38,7 @@ for(w = 0; w < czilist.length; w++) {
 	name = dir + File.separator + czilist[w];
 	basename = File.getName(name);
 
-	run("Bio-Formats Windowless Importer", "open=" + name);
-
-	// get creation date from image metadata
-	create = getMetadata("Information|Document|CreationDate #1");
-	spl = split(create);
-
-	crdate = '';
-	for(i = 0; i < lengthOf(spl); i++){
-		if (spl[i] == "Information|Document|CreationDate") {
-			crdate = spl[i+3];
-		}
-	}
+	run("Bio-Formats Windowless Importer", "open=[" + name + "]");
 
 	// save the gfp channel and close the others
 	run("Split Channels");
