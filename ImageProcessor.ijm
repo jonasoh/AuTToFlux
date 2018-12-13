@@ -42,7 +42,7 @@ for (n = 1; n < images.length; n++) {
 			Ext.setSeries(i - 1);
 			Ext.getSeriesName(sname);
 			Ext.getImageCreationDate(crdate);
-			run("Bio-Formats Windowless Importer", "open=[" + images[n] + "] series_" + i);
+			run("Bio-Formats Importer", "open=[" + images[n] + "] series_" + i);
 			saveAs("tiff", dir + File.separator + sname + ".tif");
 			File.saveString(crdate, dir + File.separator + sname + ".tif.time");
 			num++;
