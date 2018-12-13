@@ -8,7 +8,7 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(lmPerm)
-library(strict)
+#library(strict)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
@@ -127,6 +127,7 @@ for(d in realdirs) {
               Log_Ratio = log10(Mean_Ratio), 
               SD = sd(Norm_Ratio), 
               n = n()) -> expsum2
+  # XXX: write this to file as well
   
   write.table(expdata, file.path(d, 'summary-full.txt'), row.names = FALSE) 
   write.table(expsum1, file.path(d, 'summary-perseedling.txt'), row.names = FALSE)
