@@ -47,10 +47,11 @@ for(w = 0; w < czilist.length; w++) {
 	saveAs("Tiff", name + ".gfp.tif");
 
 	run("8-bit");
-	setAutoThreshold("Percentile");
+	setAutoThreshold("Percentile dark");
 
 	// thresholding magic
-	setThreshold(0, 1);
+	setThreshold(0, 7);
+	setOption("BlackBackground", false);
 	run("Convert to Mask");
 	run("Make Binary");
 	run("Options...", "iterations=3 count=7 pad do=Open");
@@ -59,7 +60,7 @@ for(w = 0; w < czilist.length; w++) {
 	run("Options...", "iterations=3 count=4 pad do=Dilate");
 	run("Fill Holes");
 	run("Erode");
-	run("Analyze Particles...", "size=500-5000 show=Masks clear add");
+	run("Analyze Particles...", "size=500-50000 pixel show=Masks clear add");
 
 	run("ROI Manager...");
 	nrois = roiManager("count");
@@ -68,7 +69,7 @@ for(w = 0; w < czilist.length; w++) {
 	if (nrois > 0) {
 		saveAs("Tiff", name + ".mask.tif");
 
-		run("Bio-Formats Windowless Importer", "open=" + name);
+		run("Bio-Formats Windowless Importer", "open=[" + name + "]");
 
 		for (i = 0; i < nrois; i++) {
 			roiManager("Select", i);
@@ -78,10 +79,8 @@ for(w = 0; w < czilist.length; w++) {
 		// save the results to .csv file
 		run("Input/Output...", "jpeg=0 gif=-1 file=.csv use_file copy_column copy_row save_column save_row");
 		saveAs("Results", name + ".csv");
-
-		// write the creation date to a separate file
-		f = File.open(name + ".time");
-		File.close(f);
+	} else {
+		print("No ROIs in " + name);
 	}
 
 	if (nrois>0) {
