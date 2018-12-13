@@ -47,11 +47,11 @@ for(w = 0; w < czilist.length; w++) {
 	saveAs("Tiff", name + ".gfp.tif");
 
 	run("8-bit");
-	setAutoThreshold("Percentile dark");
 
 	// thresholding magic
-	setThreshold(0, 7);
-	setOption("BlackBackground", false);
+	// you will need to tweak the value below to suit your images:
+	setThreshold(0, 11);
+
 	run("Convert to Mask");
 	run("Make Binary");
 	run("Options...", "iterations=3 count=7 pad do=Open");
@@ -60,7 +60,7 @@ for(w = 0; w < czilist.length; w++) {
 	run("Options...", "iterations=3 count=4 pad do=Dilate");
 	run("Fill Holes");
 	run("Erode");
-	run("Analyze Particles...", "size=500-50000 pixel show=Masks clear add");
+	run("Analyze Particles...", "size=50-5000 show=Masks clear add");
 
 	run("ROI Manager...");
 	nrois = roiManager("count");
