@@ -7,7 +7,11 @@
 library(ggplot2)
 library(dplyr)
 library(readr)
-library(lmPerm)
+
+# uncomment the line below to get permutation-based p-values
+#library(lmPerm)
+
+# uncomment to use with github.com/hadley/strict
 #library(strict)
 
 # there is no support for directory picker under non-windows platforms
@@ -138,23 +142,31 @@ for(d in realdirs) {
   # and permutation test. 
   # we need to check for the special cases where reporters and controls are named with '-N' suffix
   if ('Reporter' %in% unique(expsum1$Line)) {
-    perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-                         data=expsum1[expsum1$Line=='Reporter',], perm='Prob'))
-    ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-                             data=expsum1[expsum1$Line=='Control',], perm='Prob'))
     rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment=='DMSO'], 
                    expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment!='DMSO'])
     ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment=='DMSO'], 
                     expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment!='DMSO'])
+    perm <- NA
+    ctrlperm <- NA
+
+    # uncomment lines below to get permutation-based p-values
+    # perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+    #                      data=expsum1[expsum1$Line=='Reporter',], perm='Prob'))
+    # ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+    #                          data=expsum1[expsum1$Line=='Control',], perm='Prob'))
   } else {
-    perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-                         data=expsum1[expsum1$Line=='Reporter-N',], perm='Prob'))
-    ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-                             data=expsum1[expsum1$Line=='Control-N',], perm='Prob'))
     rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter-N' & expsum1$Treatment=='DMSO'], 
                    expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter-N' & expsum1$Treatment!='DMSO'])
     ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control-N' & expsum1$Treatment=='DMSO'], 
                     expsum1$Raw_Log_Ratio[expsum1$Line=='Control-N' & expsum1$Treatment!='DMSO'])
+    perm <- NA
+    ctrlperm <- NA
+
+    # uncomment lines below to get permutation-based p-values
+    # perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+    #                      data=expsum1[expsum1$Line=='Reporter-N',], perm='Prob'))
+    # ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+    #                          data=expsum1[expsum1$Line=='Control-N',], perm='Prob'))
   }
   
   r.p.pval <- unlist(perm)[9]

@@ -1,8 +1,10 @@
 # vacuole.R -
 #   analyze RFP/GFP ratios
 
-library(ggplot2)
 library(dplyr)
+
+# uncomment the line below to use ggplot2
+library(ggplot2)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
@@ -123,13 +125,9 @@ write.table(expsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE
 scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")
 
-# ugly sorting hack
-expdata$Treatment <- relevel(expdata$Treatment, '5uM C12')
-expdata$Treatment <- relevel(expdata$Treatment, 'DMSO')
-
-# here goes the plotting functions
-ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) + 
-  geom_point(alpha=.2, size=1.5) + 
-  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) + 
-  theme(panel.background = element_blank()) + 
-  scale_color_brewer()
+# example plotting code:
+#ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) + 
+#  geom_point(alpha=.2, size=1.5) + 
+#  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) + 
+#  theme(panel.background = element_blank()) + 
+#  scale_color_brewer()
