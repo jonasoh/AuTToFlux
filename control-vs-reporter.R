@@ -9,6 +9,7 @@ library(dplyr)
 library(readr)
 
 # uncomment the line below to get permutation-based p-values
+# also uncomment corresponding lines in the loop for statistical evaluation, at the end of the script
 #library(lmPerm)
 
 # uncomment to use with github.com/hadley/strict
@@ -105,9 +106,13 @@ for(d in realdirs) {
   
   normratios <- NULL
   
+  # rename treatments called "DMSO" to "Vehicle". this is to ensure backwards compatibility with 
+  # files generated using the old naming scheme. 
+  expdata$Treatment[expdata$Treatment == 'DMSO'] <- 'Vehicle'
+  
   # normalize data against DMSO controls, per line
   for (l in unique(expdata$Line)) {
-    dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'DMSO' & expdata$Line == l & expdata$Experiment == experiment])
+    dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'Vehicle' & expdata$Line == l & expdata$Experiment == experiment])
     normratios <- c(normratios, expdata$Ratio[expdata$Line == l & expdata$Experiment == experiment] / dmso_mean)
   }
   
@@ -143,34 +148,20 @@ for(d in realdirs) {
   # calculate p-values using both t-test (unpaired, two-tailed, no assumption of equal variances, log-transformation of ratios)
   # and permutation test. 
   # we need to check for the special cases where reporters and controls are named with '-N' suffix
-  if ('Reporter' %in% unique(expsum1$Line)) {
-    rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment=='DMSO'], 
-                   expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment!='DMSO'])
-    ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment=='DMSO'], 
-                    expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment!='DMSO'])
-    perm <- NA
-    ctrlperm <- NA
+  rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment=='Vehicle'], 
+                 expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter' & expsum1$Treatment!='Vehicle'])
+  ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment=='Vehicle'], 
+                  expsum1$Raw_Log_Ratio[expsum1$Line=='Control' & expsum1$Treatment!='Vehicle'])
+  perm <- NA
+  ctrlperm <- NA
 
-    # uncomment lines below to get permutation-based p-values
-    # perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-    #                      data=expsum1[expsum1$Line=='Reporter',], perm='Prob'))
-    # ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-    #                          data=expsum1[expsum1$Line=='Control',], perm='Prob'))
-  } else {
-    rept <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter-N' & expsum1$Treatment=='DMSO'], 
-                   expsum1$Raw_Log_Ratio[expsum1$Line=='Reporter-N' & expsum1$Treatment!='DMSO'])
-    ctrlt <- t.test(expsum1$Raw_Log_Ratio[expsum1$Line=='Control-N' & expsum1$Treatment=='DMSO'], 
-                    expsum1$Raw_Log_Ratio[expsum1$Line=='Control-N' & expsum1$Treatment!='DMSO'])
-    perm <- NA
-    ctrlperm <- NA
+  # *** uncomment lines below to get permutation-based p-values ***
+  #
+  # perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+  #                      data=expsum1[expsum1$Line=='Reporter',], perm='Prob'))
+  # ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
+  #                          data=expsum1[expsum1$Line=='Control',], perm='Prob'))
 
-    # uncomment lines below to get permutation-based p-values
-    # perm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-    #                      data=expsum1[expsum1$Line=='Reporter-N',], perm='Prob'))
-    # ctrlperm <- summary(aovp(Mean_Raw_Ratio ~ Treatment, 
-    #                          data=expsum1[expsum1$Line=='Control-N',], perm='Prob'))
-  }
-  
   r.p.pval <- unlist(perm)[9]
   c.p.pval <- unlist(ctrlperm)[9]
   rept.pval <- rept$p.value
@@ -183,8 +174,8 @@ for(d in realdirs) {
 }
 
 # collect the p-values computed using all methods and save them to a file in main dir
-exppvals <- data.frame(Experiment = experiments, Reporter.perm.pval = perms, Control.perm.pval = ctrlperms, 
-                       Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts, stringsAsFactors = FALSE)
+exppvals <- data.frame(Experiment = experiments, Reporter.ttest.pval = repts, Control.ttest.pval = ctrlts, 
+                       Reporter.perm.pval = perms, Control.perm.pval = ctrlperms, stringsAsFactors = FALSE)
 write.table(exppvals, file.path(dir, 'pvals.txt'), row.names=FALSE, sep='\t')
 
 alldata %>% 
@@ -201,3 +192,11 @@ write.table(alldata, file.path(dir, 'summary.txt'), row.names = FALSE, sep='\t')
 scripttime <- Sys.time() - starttime
 units(scripttime) <- 'mins'
 cat("Took", scripttime, "minutes to process", n, "files.\n")
+
+# add a quick graph to the dir
+quickgraph <- ggplot(allsum, aes(y=Norm_Ratio, x=Line)) + 
+  facet_wrap(. ~ Experiment) + 
+  geom_boxplot() + 
+  ylab('Normalized ratio') + 
+  theme(axis.title.x = element_blank())
+ggsave(file.path(dir, 'summary-graph.pdf'))
