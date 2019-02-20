@@ -72,7 +72,7 @@ for(f in files) {
   # if it doesn't conform, we stop the script to avoid calculation errors
   stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
   
-  bname <- sub('.czi.csv', '', bname, fixed = TRUE)
+  bname <- sub('\\.[[:print:]]+\\.csv', '', bname, fixed = FALSE)
   
   params <- unlist(strsplit(bname, '_', fixed = TRUE))
   
@@ -142,8 +142,8 @@ scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")
 
 # example plotting code:
-#ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) + 
-#  geom_point(alpha=.2, size=1.5) + 
-#  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) + 
-#  theme(panel.background = element_blank()) + 
+# ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) +
+#  geom_point(alpha=.2, size=1.5) +
+#  geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) +
+#  theme(panel.background = element_blank()) +
 #  scale_color_brewer()
