@@ -38,8 +38,10 @@ for(d in dirs) {
   }
 }
 
-# end script if there are no subdirectories
-stopifnot(length(realdirs) > 0)
+# if there are no subdirectories, we must be dealing with a single experiment
+if(!length(realdirs) > 0) {
+  realdirs <- dir
+}
 
 # process each dir separately
 for(d in realdirs) {
