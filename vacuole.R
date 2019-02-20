@@ -1,17 +1,23 @@
 # vacuole.R -
-#   analyze RFP/GFP ratios
+#   analyze RFP/GFP ratios at different timepoints and, possibly, concentrations
+# 
+#   N.B.: this script requires an info.txt file to be present in the directory.
+#         see below for the format of this file. 
 
 library(dplyr)
 
 # uncomment the line below to use ggplot2
-library(ggplot2)
+#library(ggplot2)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
-  dir = readline(prompt = "Enter directory: ")
+  dir <- readline(prompt = "Enter directory: ")
 } else {
   dir <- choose.dir(getwd(), "Choose folder to process")
 }
+
+# we need to ask for the number of timepoints for k-means clustering
+clusters <- as.numeric(readline(prompt = "Enter the number of timepoints: "))
 
 # might as well measure how long it takes
 starttime <- Sys.time()
@@ -64,23 +70,22 @@ for(f in files) {
   
   # check that the name conforms to naming standard
   # if it doesn't conform, we stop the script to avoid calculation errors
-  stopifnot(grepl('^[[:print:]]+_[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
+  stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
   
   bname <- sub('.czi.csv', '', bname, fixed = TRUE)
   
   params <- unlist(strsplit(bname, '_', fixed = TRUE))
   
-  timepoint <- params[1]
-  line <- params[2]
-  treatment <- params[3]
-  seedling_no <- as.numeric(sub('seedling', '', params[4]))
-  image_no <- as.numeric(sub('image', '', params[5]))
+  line <- params[1]
+  treatment <- params[2]
+  seedling_no <- sub('seedling', '', params[3])
+  image_no <- sub('image', '', params[4])
   
   # calculate ratios; GFP is in ch 2 and RFP in ch 1
   ratios <- na.omit(tbl$Mean[tbl$Ch == 2] / tbl$Mean[tbl$Ch == 1])
 
   # find out the exact elapsed time, in minutes
-  elapsed <- as.numeric(datetime - treatments$StartTime[treatments$Treatment == treatment]) * 60
+  elapsed <- as.numeric(datetime - treatments$StartTime[treatments$Treatment == treatment])
 
   areas <- NULL
   
@@ -89,12 +94,24 @@ for(f in files) {
     #   those in the original files (i.e. if specks were removed)
     areas = seq_along(length(ratios))
     
-    imgdata <- data.frame(Ratio = ratios, Timepoint = timepoint, Line = line, Treatment = treatment, Seedling = seedling_no, 
+    imgdata <- data.frame(Ratio = ratios, Line = line, Treatment = treatment, Seedling = seedling_no, 
                           Image = image_no, Area = areas, Actual_Time = datetime, Elapsed = elapsed, stringsAsFactors = FALSE)
     expdata <- bind_rows(expdata, imgdata)
   }
 }
 
+# use k-means clustering to group times elapsed into distinct timepoints. 
+# instead of random initial centers, we specify timepoints based on quantiles. 
+# this works as long as there are approximately equal numbers of samples for each timepoint, 
+# and is much more robust compared to using the default, random, initial centers. 
+init_quantiles <- seq(0, 1, length.out=clusters+2)[2:(clusters+1)]
+init_centers <- quantile(expdata$Elapsed, init_quantiles)
+fit <- kmeans(expdata$Elapsed, init_centers, iter.max=1000, algorithm="MacQueen")
+expdata$Timepoint <- fit$cluster
+
+expdata <- expdata %>% arrange(Timepoint)
+
+# normalize data for each timepoint
 for (tp in unique(expdata$Timepoint)) {
   dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'DMSO' & expdata$Timepoint == tp])
   normratios <- c(normratios, expdata$Ratio[expdata$Timepoint == tp] / dmso_mean)
@@ -102,10 +119,9 @@ for (tp in unique(expdata$Timepoint)) {
 
 expdata$Norm_Ratio <- normratios
 expdata$Log_Ratio <- log10(normratios)
-
-expdata$Timepoint <- as.factor(expdata$Timepoint)
 expdata$Line <- as.factor(expdata$Line)
 expdata$Treatment <- as.factor(expdata$Treatment)
+expdata$Timepoint <- as.factor(expdata$Timepoint)
 
 # summarize the data for plotting and analysis
 expdata %>% group_by(Timepoint) %>% 
