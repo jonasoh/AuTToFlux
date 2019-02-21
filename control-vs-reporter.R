@@ -79,9 +79,9 @@ for(d in realdirs) {
     
     # check that the name conforms to naming standard
     # if it doesn't conform, we stop the script to avoid calculation errors
-    stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
+    stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.[[:alnum:]]{2,4}\\.csv$', bname))
     
-    bname <- sub('.czi.csv', '', bname, fixed = TRUE)
+    bname <- sub('\\.[[:alnum:]]{2,4}\\.csv', '', bname, fixed = FALSE)
     
     params <- unlist(strsplit(bname, '_', fixed = TRUE))
     

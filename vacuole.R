@@ -70,9 +70,9 @@ for(f in files) {
   
   # check that the name conforms to naming standard
   # if it doesn't conform, we stop the script to avoid calculation errors
-  stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.czi\\.csv$', bname))
+  stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:digit:]]+_image[[:digit:]]+\\.[[:alnum:]]{2,4}\\.csv$', bname))
   
-  bname <- sub('\\.[[:print:]]+\\.csv', '', bname, fixed = FALSE)
+  bname <- sub('\\.[[:alnum:]]{2,4}\\.csv', '', bname, fixed = FALSE)
   
   params <- unlist(strsplit(bname, '_', fixed = TRUE))
   
@@ -142,7 +142,7 @@ scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")
 
 # output quick graph to directory
-quickplot <- ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) +
+quickgraph <- ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) +
   geom_point(alpha=.2, size=1.5) +
   ylab('Normalized ratio') + 
   xlab('Time since inoculation') +

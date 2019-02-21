@@ -1,4 +1,6 @@
 // ThresholdMacro.ijm
+//   processes all files in a certain directory and subfolders of that directory 
+//   using thresholding magic to detect vacuoles. 
 
 // ask the user for the directory with images to process
 dir = getDirectory("Choose directory");
@@ -26,16 +28,16 @@ for(i = 0; i < list.length; i++) {
 list = newlist;
 
 // we only process files ending in .tif
-czilist = newArray(0);
+imglist = newArray(0);
 for(w = 0; w < list.length; w++) {
 	if(endsWith(list[w], 'tif')) {
-		czilist = Array.concat(czilist, list[w]);
+		imglist = Array.concat(imglist, list[w]);
 	}
 }
 
 // loop over all images
-for(w = 0; w < czilist.length; w++) {
-	name = dir + File.separator + czilist[w];
+for(w = 0; w < imglist.length; w++) {
+	name = dir + File.separator + imglist[w];
 	basename = File.getName(name);
 
 	run("Bio-Formats Windowless Importer", "open=[" + name + "]");
@@ -106,5 +108,5 @@ if (isOpen("Results")) {
 }
 
 elapsed = (getTime() - start) / 1000;
-num = czilist.length;
+num = imglist.length;
 print("Processed " + num + " images in " + elapsed + " seconds.");
