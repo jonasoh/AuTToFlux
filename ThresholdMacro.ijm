@@ -2,6 +2,14 @@
 //   processes all files in a certain directory and subfolders of that directory 
 //   using thresholding magic to detect vacuoles. 
 
+// *** *************************************
+// *** THRESHOLDING PARAMETER FOR TUNING ***
+// *****************************************
+//
+// change to suit your system! 
+//
+upper_threshold = 11;
+
 // ask the user for the directory with images to process
 dir = getDirectory("Choose directory");
 
@@ -51,8 +59,7 @@ for(w = 0; w < imglist.length; w++) {
 	run("8-bit");
 
 	// thresholding magic
-	// you will need to tweak the value below to suit your images:
-	setThreshold(0, 11);
+	setThreshold(0, upper_threshold);
 
 	run("Convert to Mask");
 	run("Make Binary");
