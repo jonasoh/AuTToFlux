@@ -135,8 +135,8 @@ expdata %>% group_by(Timepoint) %>%
 # we need to convert POSIXct format datetimes into character in order to save them
 expdata2 <- expdata
 expdata2$Actual_Time <- as.character(expdata2$Actual_Time)
-write.table(expdata2, file.path(dir, 'summary-full.txt'), row.names = FALSE) 
-write.table(expsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE)
+write.table(expdata2, file.path(dir, 'summary-full.txt'), row.names = FALSE, sep='\t', quote=FALSE) 
+write.table(expsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE, sep='\t', quote=FALSE)
 
 scripttime <- Sys.time() - starttime
 cat("Took", scripttime, "seconds to process", length(files), "files.")

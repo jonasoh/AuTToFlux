@@ -186,8 +186,8 @@ alldata %>%
   summarize(Norm_Ratio = mean(Norm_Ratio)) -> allsum
 
 # also save complete data set as well as per-seedling summaries of all experiments
-write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE, sep='\t')
-write.table(alldata, file.path(dir, 'summary.txt'), row.names = FALSE, sep='\t')
+write.table(allsum, file.path(dir, 'summary-perseedling.txt'), row.names = FALSE, sep='\t', quote=FALSE)
+write.table(alldata, file.path(dir, 'summary.txt'), row.names = FALSE, sep='\t', quote=FALSE)
 
 scripttime <- Sys.time() - starttime
 units(scripttime) <- 'mins'
@@ -198,5 +198,5 @@ quickgraph <- ggplot(allsum, aes(y=Norm_Ratio, x=Line)) +
   facet_wrap(. ~ Experiment) + 
   geom_boxplot() + 
   ylab('Normalized ratio') + 
-  theme(axis.title.x = element_blank())
+  theme(axis.title.x = element_blank(), panel.background = element_blank())
 ggsave(file.path(dir, 'summary-graph.pdf'))
