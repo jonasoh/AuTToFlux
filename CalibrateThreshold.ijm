@@ -29,7 +29,7 @@ for(w = 0; w < imglist.length; w++) {
 	close("C2-*");
 
 	// main loop; try every threshold setting between (0, 1) and (0, 15)
-	for(upper_threshold = 1; upper_threshold < 16; upper_threshold++) {
+	for(upper_threshold = 1; upper_threshold < 15; upper_threshold++) {
 		// first, make a duplicate of the image
 		run("Duplicate...", " ");
 		run("8-bit");
@@ -45,10 +45,13 @@ for(w = 0; w < imglist.length; w++) {
 		run("Fill Holes");
 		run("Erode");
 		run("Analyze Particles...", "size=50-5000 show=Masks clear add");
+		roiManager("reset");
+		roiManager("Multi-measure measure_all");
 
 		// save the mask and close image
 		saveAs("Tiff", name + ".mask.thr0-" + upper_threshold + ".tif");
-		close();
+		saveAs("Results", name + ".mask.thr0-" + upper_threshold + ".csv");
+		close(); close();
 	}
 	close();
 }
