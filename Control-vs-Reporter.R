@@ -1,4 +1,4 @@
-# control-vs-reporter.R -
+# Control-vs-Reporter.R -
 #   compare responses in control vs reporter lines
 #   
 #   this script requires a main directory, with subdirectories containing control and reporter 

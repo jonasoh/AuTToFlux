@@ -1,4 +1,4 @@
-# vacuole.R -
+# Flux-vs-Time.R -
 #   analyze RFP/GFP ratios at different timepoints and, possibly, concentrations
 # 
 #   N.B.: this script requires an info.txt file to be present in the directory.
