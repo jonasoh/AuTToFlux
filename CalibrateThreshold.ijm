@@ -16,6 +16,11 @@ for(w = 0; w < list.length; w++) {
 	}
 }
 
+// save all masks to a temporary file
+// we use this file to create a montage later
+path = getDirectory("temp")+"list.txt";
+f = File.open(path);
+
 // loop over all images
 for(w = 0; w < imglist.length; w++) {
 	name = dir + File.separator + imglist[w];
@@ -49,9 +54,20 @@ for(w = 0; w < imglist.length; w++) {
 		roiManager("Multi-measure measure_all");
 
 		// save the mask and close image
-		saveAs("Tiff", name + ".mask.thr0-" + upper_threshold + ".tif");
-		saveAs("Results", name + ".mask.thr0-" + upper_threshold + ".csv");
+		maskname = dir + File.separator + w + ".mask.thr0-" + upper_threshold;
+		saveAs("Tiff", maskname + ".tif");
+		saveAs("Results", maskname + ".csv");
+
+		// write mask filename to list for later opening
+		print(f, maskname + ".tif");
+
 		close(); close();
 	}
 	close();
 }
+
+File.close(f);
+run("Stack From List...", "open="+path+" use");
+run("Make Montage...", "columns=14 scale=0.25 border=10 label");
+saveAs("Tiff", dir + File.separator + "threshold-overview.tif");
+close(); close();
