@@ -1,6 +1,6 @@
-// ThresholdMacro.ijm
+// FluorescenceIntensity.ijm
 //   processes all files in a certain directory and subfolders of that directory 
-//   using thresholding magic to detect vacuoles. 
+//   using thresholding magic to detect vacuoles, and records their intensities.
 
 // *** *************************************
 // *** THRESHOLDING PARAMETER FOR TUNING ***
