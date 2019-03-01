@@ -2,16 +2,11 @@
 //   processes all files in a certain directory and subfolders of that directory 
 //   using thresholding magic to detect vacuoles, and records their intensities.
 
-// *** *************************************
-// *** THRESHOLDING PARAMETER FOR TUNING ***
-// *****************************************
-//
-// change to suit your system! 
-//
-upper_threshold = 11;
-
 // ask the user for the directory with images to process
 dir = getDirectory("Choose directory");
+
+// also ask for the upper threshold limit
+upper_threshold = getNumber("Upper threshold limit", 1);
 
 // note start time, for benchmarking
 start = getTime();
