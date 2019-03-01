@@ -12,12 +12,27 @@ start = getTime();
 num = 0;
 
 // get file listing
-files = getFileList(dir);
-images = newArray("");
+list = getFileList(dir);
+newlist = list;
 
-// put supported image files in a separate array
-for (n = 0; n < files.length; n++) {
-	fn = dir + File.separator + files[n];
+// expand directories -- we only recurse one level deep
+// (i.e. main directory with subdirs for each experiment
+for(i = 0; i < list.length; i++) {
+	if (endsWith(list[i], File.separator)) {
+		print("checking " + list[i]);
+		files = getFileList(dir + list[i]);
+		for (n = 0; n < files.length; n++) {
+			files[n] = list[i] + File.separator + files[n];
+		}
+		newlist = Array.concat(newlist, files);
+		Array.print(newlist);
+	}
+}
+
+// only process image files
+images = newArray(0);
+for(w = 0; w < list.length; w++) {
+	fn = dir + File.separator + list[w];
 	Ext.isThisType(fn, type)
 	if (type == "true") {
 		images = Array.concat(images, fn);
