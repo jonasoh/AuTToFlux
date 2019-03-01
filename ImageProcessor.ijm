@@ -18,21 +18,21 @@ newlist = list;
 // expand directories -- we only recurse one level deep
 // (i.e. main directory with subdirs for each experiment
 for(i = 0; i < list.length; i++) {
-	if (endsWith(list[i], File.separator)) {
-		print("checking " + list[i]);
+	if (endsWith(list[i], '/')) {
 		files = getFileList(dir + list[i]);
 		for (n = 0; n < files.length; n++) {
-			files[n] = list[i] + File.separator + files[n];
+			files[n] = list[i] + '/' + files[n];
 		}
 		newlist = Array.concat(newlist, files);
-		Array.print(newlist);
 	}
 }
+
+list = newlist;
 
 // only process image files
 images = newArray(0);
 for(w = 0; w < list.length; w++) {
-	fn = dir + File.separator + list[w];
+	fn = dir + '/' + list[w];
 	Ext.isThisType(fn, type)
 	if (type == "true") {
 		images = Array.concat(images, fn);
@@ -40,7 +40,7 @@ for(w = 0; w < list.length; w++) {
 }
 
 // process images
-for (n = 1; n < images.length; n++) {
+for (n = 0; n < images.length; n++) {
 	Ext.setId(images[n]);
 	Ext.getSeriesCount(count);
 	if (count == 1) {
@@ -59,7 +59,7 @@ for (n = 1; n < images.length; n++) {
 			Ext.getImageCreationDate(crdate);
 			run("Bio-Formats Importer", "open=[" + images[n] + "] series_" + i);
 			saveAs("tiff", dir + File.separator + sname + ".tif");
-			File.saveString(crdate, dir + File.separator + sname + ".tif.time");
+			File.saveString(crdate, dir + '/' + sname + ".tif.time");
 			num++;
 			close();
 		}

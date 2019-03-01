@@ -18,14 +18,12 @@ newlist = list;
 // expand directories -- we only recurse one level deep
 // (i.e. main directory with subdirs for each experiment
 for(i = 0; i < list.length; i++) {
-	if (endsWith(list[i], File.separator)) {
-		print("checking " + list[i]);
+	if (endsWith(list[i], '/')) {
 		files = getFileList(dir + list[i]);
 		for (n = 0; n < files.length; n++) {
-			files[n] = list[i] + File.separator + files[n];
+			files[n] = list[i] + '/' + files[n];
 		}
 		newlist = Array.concat(newlist, files);
-		Array.print(newlist);
 	}
 }
 list = newlist;
@@ -40,7 +38,7 @@ for(w = 0; w < list.length; w++) {
 
 // loop over all images
 for(w = 0; w < imglist.length; w++) {
-	name = dir + File.separator + imglist[w];
+	name = dir + '/' + imglist[w];
 	basename = File.getName(name);
 
 	run("Bio-Formats Windowless Importer", "open=[" + name + "]");
