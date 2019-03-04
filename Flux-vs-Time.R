@@ -44,7 +44,11 @@ files <- list.files(path = dir, pattern = 'csv$', full.names = TRUE, recursive =
 for(f in files) {
   # read the file and its accompanying creation time
   tbl <- read.csv(f, stringsAsFactors = FALSE)
-  crdate <- read.table(sub('csv$', 'time', f), stringsAsFactors = FALSE)
+  
+  # suppress non-endline warnings
+  suppressWarnings(
+    crdate <- read.table(sub('csv$', 'time', f), stringsAsFactors = FALSE)
+  )
 
   # process time description
   datetime <- as.character(crdate)
@@ -83,7 +87,7 @@ for(f in files) {
   ratios <- na.omit(tbl$Mean[tbl$Ch == 2] / tbl$Mean[tbl$Ch == 1])
 
   # find out the exact elapsed time, in minutes
-  elapsed <- as.numeric(datetime - treatments$StartTime[treatments$Treatment == treatment])
+  elapsed <- as.numeric(difftime(datetime, treatments$StartTime[treatments$Treatment == treatment]), units="hours")
 
   areas <- NULL
   
