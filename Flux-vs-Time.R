@@ -5,9 +5,7 @@
 #         see below for the format of this file. 
 
 library(dplyr)
-
-# uncomment the line below to use ggplot2
-#library(ggplot2)
+library(ggplot2)
 
 # there is no support for directory picker under non-windows platforms
 if (.Platform$OS.type == 'unix') {
