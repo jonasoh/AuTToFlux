@@ -25,7 +25,7 @@ starttime <- Sys.time()
 #
 #   Treatment | StartTime
 #   ----------+------------------
-#   DMSO      | 2017-07-24 15:13
+#   Vehicle   | 2017-07-24 15:13
 #   ...       | ...
 #
 # the values of StartTime are used to calculate the exact times since inoculation
@@ -34,6 +34,10 @@ infofile <- file.path(dir, 'info.txt')
 stopifnot(file.exists(infofile))
 treatments <- read.delim(infofile)
 treatments$StartTime <- strptime(treatments$StartTime, format='%Y-%m-%d %H:%M')
+
+# rename treatments called "DMSO" to "Vehicle". this is to ensure backwards compatibility with 
+# files generated using the old naming scheme. 
+treatments$Treatment[treatments$Treatment == 'DMSO'] <- 'Vehicle'
 
 # make sure to start with a clean slate
 expdata <- normratios <- NULL
@@ -79,7 +83,13 @@ for(f in files) {
   params <- unlist(strsplit(bname, '_', fixed = TRUE))
   
   line <- params[1]
-  treatment <- params[2]
+
+  if (params[2] != 'DMSO') {
+    treatment <- params[2]
+  } else {
+    treatment <- 'Vehicle'
+  }
+
   seedling_no <- sub('seedling', '', params[3])
   image_no <- sub('image', '', params[4])
   
@@ -115,7 +125,7 @@ expdata <- expdata %>% arrange(Timepoint)
 
 # normalize data for each timepoint
 for (tp in unique(expdata$Timepoint)) {
-  dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'DMSO' & expdata$Timepoint == tp])
+  dmso_mean <- mean(expdata$Ratio[expdata$Treatment == 'Vehicle' & expdata$Timepoint == tp])
   normratios <- c(normratios, expdata$Ratio[expdata$Timepoint == tp] / dmso_mean)
 }
 
