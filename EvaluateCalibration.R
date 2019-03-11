@@ -53,3 +53,4 @@ quickgraph <- ggplot(sumthreshold, aes(x=threshold, y=sumarea, group=image, colo
   scale_x_continuous(limits=c(1,14), breaks=1:14)
   
 ggsave(file.path(dir, 'threshold-graph.pdf'), units='cm', width=20, height=12)
+print("Results written to 'threshold-graph.pdf'.")
