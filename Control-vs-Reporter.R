@@ -79,7 +79,10 @@ for(d in realdirs) {
     
     # check that the name conforms to naming standard
     # if it doesn't conform, we stop the script to avoid calculation errors
-    stopifnot(grepl('^[[:print:]]+_[[:print:]]+_seedling[[:alnum:]]+_image[[:alnum:]]+(\\.[[:alnum:]]{2,4})?\\.[[:alnum:]]{2,4}\\.csv$', bname))
+    if (!grepl('^[[:alnum:]]+_[[:alnum:]]+_seedling[[:alnum:]]+_image[[:alnum:]]+(\\.[[:alnum:]]{2,4})?\\.[[:alnum:]]{2,4}\\.csv$', bname)) {
+      print(paste(bname, 'does not match naming scheme'))
+      stop()
+    }
     
     bname <- sub('\\.[[:alnum:]]{2,4}(\\.[[:alnum:]]{2,4})?\\.csv', '', bname, fixed = FALSE)
     
