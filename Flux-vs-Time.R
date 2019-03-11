@@ -76,7 +76,7 @@ for(f in files) {
   
   # check that the name conforms to naming standard
   # if it doesn't conform, we stop the script to avoid calculation errors
-  if (!grepl('^[[:alnum:]]+_[[:alnum:]]+_seedling[[:alnum:]]+_image[[:alnum:]]+(\\.[[:alnum:]]{2,4})?\\.[[:alnum:]]{2,4}\\.csv$', bname)) {
+  if (!grepl('^[^_]+_[^_]+_seedling[[:alnum:]]+_image[[:alnum:]]+(\\.[[:alnum:]]{2,4})?\\.[[:alnum:]]{2,4}\\.csv$', bname)) {
     print(paste(bname, 'does not match naming scheme'))
     stop()
   }
