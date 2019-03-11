@@ -93,6 +93,12 @@ for(f in files) {
   seedling_no <- sub('seedling', '', params[3])
   image_no <- sub('image', '', params[4])
   
+  # exit if we can't extract parameters
+  if ('' %in% c(line, treatment) | NA %in% c(seedling_no, image_no)) {
+    print(paste("Unable to extract parameters from this file:", origbname))
+    stop()
+  }
+
   # calculate ratios; GFP is in ch 2 and RFP in ch 1
   ratios <- na.omit(tbl$Mean[tbl$Ch == 2] / tbl$Mean[tbl$Ch == 1])
 

@@ -90,7 +90,8 @@ for(d in realdirs) {
     seedling_no <- as.numeric(sub('seedling', '', params[3]))
     image_no <- as.numeric(sub('image', '', params[4]))
     
-    if ('' %in% c(line, treatment, seedling_no, image_no)) {
+    # exit if we can't extract parameters
+    if ('' %in% c(line, treatment) | NA %in% c(seedling_no, image_no)) {
       print(paste("Unable to extract parameters from this file:", origbname))
       stop()
     }
