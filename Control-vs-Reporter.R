@@ -75,7 +75,7 @@ for(d in realdirs) {
     }
     
     # get the base file name - we derive data from it
-    bname <- basename(f)
+    bname <- origbname <- basename(f)
     
     # check that the name conforms to naming standard
     # if it doesn't conform, we stop the script to avoid calculation errors
@@ -89,6 +89,11 @@ for(d in realdirs) {
     treatment <- params[2]
     seedling_no <- as.numeric(sub('seedling', '', params[3]))
     image_no <- as.numeric(sub('image', '', params[4]))
+    
+    if ('' %in% c(line, treatment, seedling_no, image_no)) {
+      print(paste("Unable to extract parameters from this file:", origbname))
+      stop()
+    }
     
     # calculate ratios; RFP is in ch 2 and GFP in ch 1
     ratios <- na.omit(tbl$Mean1[tbl$Ch == 2] / tbl$Mean1[tbl$Ch == 1])
