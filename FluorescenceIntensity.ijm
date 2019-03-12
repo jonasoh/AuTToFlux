@@ -36,6 +36,9 @@ for(w = 0; w < list.length; w++) {
 	}
 }
 
+// set correct measurements
+run("Set Measurements...", "area mean redirect=None decimal=3");
+
 // loop over all images
 for(w = 0; w < imglist.length; w++) {
 	name = dir + '/' + imglist[w];
