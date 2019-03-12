@@ -72,7 +72,7 @@ for(f in files) {
   }
   
   # get the base file name - we derive data from it
-  bname <- basename(f)
+  bname <- origbname <- basename(f)
   
   # check that the name conforms to naming standard
   # if it doesn't conform, we stop the script to avoid calculation errors
@@ -95,6 +95,12 @@ for(f in files) {
 
   seedling_no <- sub('seedling', '', params[3])
   image_no <- sub('image', '', params[4])
+  
+  # exit if we can't extract parameters
+  if ('' %in% c(line, treatment) | NA %in% c(seedling_no, image_no)) {
+    print(paste("Unable to extract parameters from this file:", origbname))
+    stop()
+  }
   
   # exit if we can't extract parameters
   if ('' %in% c(line, treatment) | NA %in% c(seedling_no, image_no)) {
