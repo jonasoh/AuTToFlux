@@ -32,7 +32,7 @@ starttime <- Sys.time()
 
 infofile <- file.path(dir, 'info.txt')
 stopifnot(file.exists(infofile))
-treatments <- read.delim(infofile)
+treatments <- read.delim(infofile, stringsAsFactors=FALSE)
 treatments$StartTime <- strptime(treatments$StartTime, format='%Y-%m-%d %H:%M')
 
 # rename treatments called "DMSO" to "Vehicle". this is to ensure backwards compatibility with 
