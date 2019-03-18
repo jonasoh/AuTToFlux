@@ -1,5 +1,5 @@
 # Flux-vs-Time.R -
-#   analyze RFP/GFP ratios at different timepoints and, possibly, concentrations
+#   analyze RFP/mWasabi ratios at different timepoints and, possibly, concentrations
 # 
 #   N.B.: this script requires an info.txt file to be present in the directory.
 #         see below for the format of this file. 
@@ -108,7 +108,7 @@ for(f in files) {
     stop()
   }
 
-  # calculate ratios; GFP is in ch 2 and RFP in ch 1
+  # calculate ratios; mWasabi is in ch 2 and RFP in ch 1
   ratios <- na.omit(tbl$Mean[tbl$Ch == 2] / tbl$Mean[tbl$Ch == 1])
 
   # find out the exact elapsed time, in minutes

@@ -28,7 +28,7 @@ for(w = 0; w < imglist.length; w++) {
 
 	run("Bio-Formats Windowless Importer", "open=[" + name + "]");
 
-	// use the gfp channel
+	// use the mWasabi channel
 	run("Split Channels");
 	close("C3-*");
 	close("C2-*");

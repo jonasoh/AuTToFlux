@@ -46,11 +46,11 @@ for(w = 0; w < imglist.length; w++) {
 
 	run("Bio-Formats Windowless Importer", "open=[" + name + "]");
 
-	// save the gfp channel and close the others
+	// save the mWasabi channel and close the others
 	run("Split Channels");
 	close("C3-*");
 	close("C2-*");
-	saveAs("Tiff", name + ".gfp.tif");
+	saveAs("Tiff", name + ".mWasabi.tif");
 
 	run("8-bit");
 
