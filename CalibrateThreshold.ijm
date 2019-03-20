@@ -68,6 +68,6 @@ for(w = 0; w < imglist.length; w++) {
 
 File.close(f);
 run("Stack From List...", "open="+path+" use");
-run("Make Montage...", "columns=14 scale=0.25 border=10 label");
+run("Make Montage...", "columns=14 rows=" + imglist.length + " scale=0.25 border=10 label");
 saveAs("Tiff", dir + File.separator + "threshold-overview.tif");
 close(); close();
