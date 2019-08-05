@@ -172,7 +172,7 @@ cat("Took", scripttime, "seconds to process", length(files), "files.")
 quickgraph <- ggplot(expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment)) +
   geom_point(alpha=.2, size=1.5) +
   ylab('Normalized ratio') + 
-  xlab('Time since inoculation') +
+  xlab('Time since inoculation (h)') +
   geom_smooth(data=expdata, aes(x=Elapsed, y=Norm_Ratio, color=Treatment), method='lm', formula = y ~ poly(x,2), se=FALSE) +
   theme(panel.background = element_blank())
 ggsave(file.path(dir, 'summary-graph.pdf'))
