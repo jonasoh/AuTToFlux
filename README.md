@@ -8,7 +8,7 @@ This assay was developed for the study published in [(Dauphinee et al., 2019)](h
 
 The assay includes high-throughput analysis of CLSM images using the designated AuTToFlux pipeline. The pipeline consists of the following steps:
 1. Image processing using ImageJ macro:
- - convert images from different microscopy manufacturers into a common format )[ImageProcessor.ijm](https://github.com/jonasoh/AuTToFlux/blob/master/ImageJ%20macro/ImageProcessor.ijm)).
+ - convert images from different microscopy manufacturers into a common format ([ImageProcessor.ijm](https://github.com/jonasoh/AuTToFlux/blob/master/ImageJ%20macro/ImageProcessor.ijm)).
  - if needed, fine tune the tresholding parameters to best match the image quality ([CalibrateThreshold.ijm](https://github.com/jonasoh/AuTToFlux/blob/master/ImageJ%20macro/CalibrateThreshold.ijm)).
  - identify the vacuoles and calculate the fluorescence intensities ratio for the reporter proteins  ([FluorescenceIntensity.ijm](https://github.com/jonasoh/AuTToFlux/blob/master/ImageJ%20macro/FluorescenceIntensity.ijm)).
  
