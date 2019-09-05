@@ -1,8 +1,8 @@
 # Tandem tag assay
 
-The Tandem Tag assay is a widespread approach for quantifying autophagic activity in living cells. Here, we provide a step-by step description of a semi-automated high-throughput TT asay optimized for measuring autophagic activity in <i>Arabidopsis thaliana</i> roots, and provide a designated ImageJ macro and R scripts designed for this task.
+The Tandem Tag (TT) assay is a widespread approach for quantifying autophagic activity in living cells. Here, we provide a semi-automated high-throughput TT assay optimized for measuring autophagic activity in <i>Arabidopsis thaliana</i> roots, and provide a designated ImageJ macro and R scripts designed for this task.
 
-The detailed protocol for TT asay can be found [here](https://github.com/jonasoh/AuTToFlux/blob/master/TT%20assay%20protocol/Dauphinee%20et%20al%202019.pdf).
+The detailed protocol for the TT assay can be found [here](https://github.com/jonasoh/AuTToFlux/blob/master/TT%20assay%20protocol/Dauphinee%20et%20al%202019.pdf).
 
 This assay was developed for the study published in [(Dauphinee et al., 2019)](https://doi.org/10.1101/569327). 
 
