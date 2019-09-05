@@ -1,6 +1,6 @@
 # Tandem tag assay
 
-The Tandem Tag (TT) assay is a widespread approach for quantifying autophagic activity in living cells. Here, we provide a semi-automated high-throughput TT assay optimized for measuring autophagic activity in <i>Arabidopsis thaliana</i> roots, and provide a designated ImageJ macro and R scripts designed for this task.
+The Tandem Tag (TT) assay is a widespread approach for quantifying autophagic activity in living cells. Here, we provide a semi-automated high-throughput TT assay optimized for measuring autophagic activity in <i>Arabidopsis thaliana</i> roots and designated ImageJ macro and R scripts that enable analysis.
 
 The detailed protocol for the TT assay can be found [here](https://github.com/jonasoh/AuTToFlux/blob/master/TT%20assay%20protocol/Dauphinee%20et%20al%202019.pdf).
 
@@ -13,7 +13,7 @@ The assay includes high-throughput analysis of CLSM images using the designated 
  - identify the vacuoles and calculate the fluorescence intensities ratio for the reporter proteins  ([FluorescenceIntensity.ijm](https://github.com/jonasoh/AuTToFlux/blob/master/ImageJ%20macro/FluorescenceIntensity.ijm)).
  
 2. Analyzing the obtained quantitative data using R scripts for different types of comparisons, and generating statistics:
-- changes of autophagic activity as a function of time ([Flux-vs-Time.R](https://github.com/jonasoh/AuTToFlux/blob/master/R%20scripts/Flux-vs-Time.R)).
+- autophagic activity as a function of time ([Flux-vs-Time.R](https://github.com/jonasoh/AuTToFlux/blob/master/R%20scripts/Flux-vs-Time.R)).
 - comparison of autophagic activity in control vs reporter lines ([Control-vs-Reporter.R](https://github.com/jonasoh/AuTToFlux/blob/master/R%20scripts/Control-vs-Reporter.R)).
 
 
