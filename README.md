@@ -16,6 +16,8 @@ The assay includes high-throughput analysis of CLSM images using the designated 
 - changes of autophagic activity as a function of time ([Flux-vs-Time.R](https://github.com/jonasoh/AuTToFlux/blob/master/R%20scripts/Flux-vs-Time.R)).
 - comparison of autophagic activity in control vs reporter lines ([Control-vs-Reporter.R](https://github.com/jonasoh/AuTToFlux/blob/master/R%20scripts/Control-vs-Reporter.R)).
 
+
+<b>Figure 1. TT assay workflow diagram </b>
+
 ![Workflow diagram](https://user-images.githubusercontent.com/6480370/54531906-c0c39800-4986-11e9-868f-4f0e9ecb9d00.png)
 
-<b>TT assay workflow diagram </b>
