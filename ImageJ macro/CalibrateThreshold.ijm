@@ -49,6 +49,7 @@ for(w = 0; w < imglist.length; w++) {
 		run("Options...", "iterations=3 count=4 pad do=Dilate");
 		run("Fill Holes");
 		run("Erode");
+		run("Set Measurements...", "area redirect=None decimal=5");
 		run("Analyze Particles...", "size=50-5000 show=Masks clear add");
 		roiManager("reset");
 		roiManager("Multi-measure measure_all");
@@ -71,3 +72,4 @@ run("Stack From List...", "open="+path+" use");
 run("Make Montage...", "columns=14 rows=" + imglist.length + " scale=0.25 border=10 label");
 saveAs("Tiff", dir + File.separator + "threshold-overview.tif");
 close(); close();
+
