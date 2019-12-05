@@ -4,7 +4,7 @@ The Tandem Tag (TT) assay is a widespread approach for quantifying autophagic ac
 
 The detailed protocol for the TT assay can be found [here](https://github.com/jonasoh/AuTToFlux/blob/master/TT%20assay%20protocol/Dauphinee%20et%20al%202019.pdf).
 
-This assay was developed for the study published in [(Dauphinee et al., 2019)](https://doi.org/10.1101/569327). 
+This assay was developed for the study published in [(Dauphinee et al., 2019)](https://doi.org/10.1104/pp.19.00647).
 
 The assay includes high-throughput analysis of CLSM images using the designated AuTToFlux pipeline. The pipeline consists of the following steps:
 1. Image processing using ImageJ macro:
