@@ -56,7 +56,7 @@ for(w = 0; w < imglist.length; w++) {
 
 	// thresholding magic
 	setThreshold(0, upper_threshold);
-    setOption("BlackBackground", true);
+	setOption("BlackBackground", true);
 	run("Convert to Mask");
 	run("Make Binary");
 	run("Options...", "iterations=3 count=7 pad do=Open");
