@@ -203,8 +203,8 @@ units(scripttime) <- 'mins'
 cat("Took", scripttime, "minutes to process", n, "files.\n")
 
 # add a quick graph to the dir
-quickgraph <- ggplot(allsum, aes(y=Norm_Ratio, x=Line)) + 
-  facet_wrap(. ~ Experiment) + 
+quickgraph <- ggplot(allsum, aes(y=Norm_Ratio, x=Treatment)) +
+  facet_wrap(. ~ Line) +
   geom_boxplot() + 
   ylab('Normalized ratio') + 
   theme(axis.title.x = element_blank(), panel.background = element_blank())
